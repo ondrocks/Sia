@@ -214,7 +214,7 @@ func TestConcurrentBuilders(t *testing.T) {
 
 	// Get a second reading on the wallet's balance.
 	fundedSCConfirmed, _, _ := wt.wallet.ConfirmedBalance()
-	if startingSCConfirmed.Cmp(fundedSCConfirmed) != 0 {
+	if !startingSCConfirmed.Equals(fundedSCConfirmed) {
 		t.Fatal("confirmed siacoin balance changed when no blocks have been mined", startingSCConfirmed, fundedSCConfirmed)
 	}
 
@@ -305,11 +305,6 @@ func TestConcurrentBuildersSingleOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Check that there is only one output in the wallet.
-	if len(wt.wallet.siacoinOutputs) != 1 {
-		t.Fatal("wallet is supposed to have only one output", wt.wallet.siacoinOutputs)
-	}
-
 	// Get a baseline balance for the wallet.
 	startingSCConfirmed, _, _ := wt.wallet.ConfirmedBalance()
 	startingOutgoing, startingIncoming := wt.wallet.UnconfirmedBalance()
@@ -337,7 +332,7 @@ func TestConcurrentBuildersSingleOutput(t *testing.T) {
 
 	// Get a second reading on the wallet's balance.
 	fundedSCConfirmed, _, _ := wt.wallet.ConfirmedBalance()
-	if startingSCConfirmed.Cmp(fundedSCConfirmed) != 0 {
+	if !startingSCConfirmed.Equals(fundedSCConfirmed) {
 		t.Fatal("confirmed siacoin balance changed when no blocks have been mined", startingSCConfirmed, fundedSCConfirmed)
 	}
 
@@ -445,7 +440,7 @@ func TestParallelBuilders(t *testing.T) {
 	// Check the final balance.
 	endingSCConfirmed, _, _ := wt.wallet.ConfirmedBalance()
 	expected := startingSCConfirmed.Sub(funding.Mul(types.NewCurrency64(uint64(outputsDesired))))
-	if expected.Cmp(endingSCConfirmed) != 0 {
+	if !expected.Equals(endingSCConfirmed) {
 		t.Fatal("did not get the expected ending balance", expected, endingSCConfirmed, startingSCConfirmed)
 	}
 }

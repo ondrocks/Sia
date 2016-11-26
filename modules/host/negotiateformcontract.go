@@ -255,7 +255,7 @@ func (h *Host) managedVerifyNewContract(txnSet []types.Transaction, renterPK cry
 	// Check that the payouts for the valid proof outputs and the missed proof
 	// outputs are the same - this is important because no data has been added
 	// to the file contract yet.
-	if fc.ValidProofOutputs[1].Value.Cmp(fc.MissedProofOutputs[1].Value) != 0 {
+	if !fc.ValidProofOutputs[1].Value.Equals(fc.MissedProofOutputs[1].Value) {
 		return errMismatchedHostPayouts
 	}
 	// Check that there's enough payout for the host to cover at least the
@@ -280,10 +280,7 @@ func (h *Host) managedVerifyNewContract(txnSet []types.Transaction, renterPK cry
 	// the host knows how to spend.
 	expectedUH := types.UnlockConditions{
 		PublicKeys: []types.SiaPublicKey{
-			{
-				Algorithm: types.SignatureEd25519,
-				Key:       renterPK[:],
-			},
+			types.Ed25519PublicKey(renterPK),
 			publicKey,
 		},
 		SignaturesRequired: 2,
