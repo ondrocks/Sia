@@ -2,7 +2,9 @@ package consensus
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
+	"runtime/debug"
 
 	"github.com/NebulousLabs/Sia/build"
 	"github.com/NebulousLabs/Sia/crypto"
@@ -36,6 +38,8 @@ func validSiacoins(tx *bolt.Tx, t types.Transaction) error {
 		// Check that the input spends an existing output.
 		scoBytes := scoBucket.Get(sci.ParentID[:])
 		if scoBytes == nil {
+			fmt.Println("illegal:", sci.ParentID)
+			debug.PrintStack()
 			return errMissingSiacoinOutput
 		}
 

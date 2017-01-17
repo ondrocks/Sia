@@ -3,6 +3,7 @@ package wallet
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"sort"
 
 	"github.com/NebulousLabs/Sia/crypto"
@@ -113,6 +114,7 @@ func (w *Wallet) checkOutput(id types.SiacoinOutputID, output types.SiacoinOutpu
 		return errOutputTimelock
 	}
 
+	// fmt.Println("Clearing output:", id)
 	return nil
 }
 
@@ -180,6 +182,7 @@ func (tb *transactionBuilder) FundSiacoins(amount types.Currency) error {
 		outputUnlockConditions := tb.wallet.keys[sco.UnlockHash].UnlockConditions
 
 		// Add a siacoin input for this output.
+		fmt.Println("Adding output to prep:", scoid, sco.Value)
 		sci := types.SiacoinInput{
 			ParentID:         scoid,
 			UnlockConditions: outputUnlockConditions,
@@ -236,6 +239,7 @@ func (tb *transactionBuilder) FundSiacoins(amount types.Currency) error {
 	// Mark the parent output as spent. Must be done after the transaction is
 	// finished because otherwise the txid and output id will change.
 	tb.wallet.spentOutputs[types.OutputID(parentTxn.SiacoinOutputID(0))] = tb.wallet.consensusSetHeight
+	fmt.Println("Marking output as spent:", parentTxn.SiacoinOutputID(0))
 
 	// Add the exact output.
 	newInput := types.SiacoinInput{

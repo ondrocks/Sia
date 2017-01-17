@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/NebulousLabs/Sia/build"
@@ -64,6 +65,7 @@ func (w *Wallet) updateConfirmedSet(cc modules.ConsensusChange) {
 // blocks in the consensus change.
 func (w *Wallet) revertHistory(cc modules.ConsensusChange) {
 	for _, block := range cc.RevertedBlocks {
+		fmt.Println("REVERTING HISTORY")
 		// Remove any transactions that have been reverted.
 		for i := len(block.Transactions) - 1; i >= 0; i-- {
 			// If the transaction is relevant to the wallet, it will be the
@@ -122,7 +124,16 @@ func (w *Wallet) applyHistory(cc modules.ConsensusChange) {
 			w.processedTransactions = append(w.processedTransactions, minerPT)
 			w.processedTransactionMap[minerPT.TransactionID] = &w.processedTransactions[len(w.processedTransactions)-1]
 		}
+		fmt.Println("Block Set:")
 		for _, txn := range block.Transactions {
+			fmt.Println("\tPrinting txn")
+			for _, sci := range txn.SiacoinInputs {
+				fmt.Println("\t\tInput:", sci.ParentID)
+			}
+			for i := range txn.SiacoinOutputs {
+				fmt.Println("\t\tOutput:", txn.SiacoinOutputID(uint64(i)))
+			}
+
 			relevant := false
 			pt := modules.ProcessedTransaction{
 				Transaction:           txn,

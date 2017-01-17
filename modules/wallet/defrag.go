@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 
 	"github.com/NebulousLabs/Sia/build"
@@ -62,6 +63,7 @@ func (tb *transactionBuilder) fundDefragger(fee types.Currency) (types.Currency,
 		sco := so.outputs[i]
 
 		// Add a siacoin input for this output.
+		fmt.Println("Adding Defrag Output:", scoid, sco.Value)
 		outputUnlockConditions := tb.wallet.keys[sco.UnlockHash].UnlockConditions
 		sci := types.SiacoinInput{
 			ParentID:         scoid,
@@ -95,6 +97,7 @@ func (tb *transactionBuilder) fundDefragger(fee types.Currency) (types.Currency,
 	}
 	// Mark the parent output as spent. Must be done after the transaction is
 	// finished because otherwise the txid and output id will change.
+	fmt.Println("Marking output as spent:", parentTxn.SiacoinOutputID(0))
 	tb.wallet.spentOutputs[types.OutputID(parentTxn.SiacoinOutputID(0))] = tb.wallet.consensusSetHeight
 
 	// Add the exact output.

@@ -5,6 +5,7 @@ package transactionpool
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/NebulousLabs/Sia/crypto"
 	"github.com/NebulousLabs/Sia/encoding"
@@ -304,9 +305,30 @@ func (tp *TransactionPool) AcceptTransactionSet(ts []types.Transaction) error {
 	tp.mu.Lock()
 	defer tp.mu.Unlock()
 
+	fmt.Println("Attempt txn set:")
+	for _, txn := range ts {
+		fmt.Println("\tAttempting... Only Attempting txn")
+		for _, sci := range txn.SiacoinInputs {
+			fmt.Println("\t\tInput:", sci.ParentID)
+		}
+		for i := range txn.SiacoinOutputs {
+			fmt.Println("\t\tOutput:", txn.SiacoinOutputID(uint64(i)))
+		}
+	}
 	err := tp.acceptTransactionSet(ts)
 	if err != nil {
+		fmt.Println("ATTEMPT HAS FAILED")
 		return err
+	}
+	fmt.Println("Success txn set:")
+	for _, txn := range ts {
+		fmt.Println("\tAccepting txn")
+		for _, sci := range txn.SiacoinInputs {
+			fmt.Println("\t\tInput:", sci.ParentID)
+		}
+		for i := range txn.SiacoinOutputs {
+			fmt.Println("\t\tOutput:", txn.SiacoinOutputID(uint64(i)))
+		}
 	}
 
 	// Notify subscribers and broadcast the transaction set.
