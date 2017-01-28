@@ -222,8 +222,8 @@ func New(requiredUserAgent string, requiredPassword string, cs modules.Consensus
 		router.POST("/renter/upload/*siapath", RequirePassword(api.renterUploadHandler, requiredPassword))
 
 		// HostDB endpoints.
-		router.GET("/hostdb/active", api.renterHostsActiveHandler)
-		router.GET("/hostdb/all", api.renterHostsAllHandler)
+		router.GET("/hostdb/active", api.hostdbActive)
+		router.GET("/hostdb/all", api.hostdbAll)
 	}
 
 	// TransactionPool API Calls
